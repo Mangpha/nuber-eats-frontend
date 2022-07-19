@@ -5,8 +5,8 @@ import { FormError } from "../components/form-error";
 import { LoginMutation, LoginMutationVariables } from "../__api__/LoginMutation";
 
 const LOGIN_MUTATION = gql`
-    mutation LoginMutation($email: String!, $password: String!) {
-        login(input: { email: $email, password: $password }) {
+    mutation LoginMutation($loginInput: LoginInput!) {
+        login(input: $loginInput) {
             ok
             token
             error
@@ -26,17 +26,26 @@ export const Login = () => {
         formState: { errors },
         handleSubmit,
     } = useForm<ILoginForm>();
-    const [loginMutation, { data }] = useMutation<LoginMutation, LoginMutationVariables>(
-        LOGIN_MUTATION,
-    );
+    const onCompleted = (data: LoginMutation) => {
+        const { ok, token } = data.login;
+        if (ok) console.log(token);
+    };
+
+    const [loginMutation, { data: loginMutationResult, loading }] = useMutation<
+        LoginMutation,
+        LoginMutationVariables
+    >(LOGIN_MUTATION, {
+        onCompleted,
+    });
     const onSubmit = () => {
-        const { email, password } = getValues();
-        loginMutation({
-            variables: {
-                email,
-                password,
-            },
-        });
+        if (!loading) {
+            const { email, password } = getValues();
+            loginMutation({
+                variables: {
+                    loginInput: { email, password },
+                },
+            });
+        }
     };
 
     return (
@@ -69,7 +78,10 @@ export const Login = () => {
                     {errors.password?.type === "minLength" && (
                         <FormError errorMessage="Password must be more than 10 chars." />
                     )}
-                    <button className="mt-3 btn">Log In</button>
+                    <button className="mt-3 btn">{loading ? "Loading..." : "Log In"}</button>
+                    {loginMutationResult?.login.error && (
+                        <FormError errorMessage={loginMutationResult.login.error} />
+                    )}
                 </form>
             </div>
         </div>
