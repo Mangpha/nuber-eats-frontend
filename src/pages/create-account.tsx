@@ -1,5 +1,5 @@
 import React from "react";
-import Helmet from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import { gql, useMutation } from "@apollo/client";
 import { useForm } from "react-hook-form";
 import { FormError } from "../components/form-error";
@@ -43,6 +43,7 @@ export const CreateAccount = () => {
     const onCompleted = (data: CreateAccountMutation) => {
         const { ok } = data.createAccount;
         if (ok) {
+            alert("Account Created!");
             navigate("/");
         }
     };
