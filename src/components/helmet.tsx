@@ -8,7 +8,7 @@ interface IHelmetProps {
 export const CustomHelmet: React.FC<IHelmetProps> = ({ content }) => {
     return (
         <Helmet>
-            <title>{content ? `${content} | Nuber Eats` : "Nuber Eats"}</title>
+            <title>{`${content || "Home"} | Nuber Eats`}</title>
         </Helmet>
     );
 };

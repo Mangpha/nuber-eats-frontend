@@ -1,7 +1,10 @@
 import { gql, useQuery } from "@apollo/client";
 import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { CustomHelmet } from "../../components/helmet";
 import { Restaurant } from "../../components/restaurant";
+import { CATEGORY_FRAGMENT, RESTAURANT_FRAGMENT } from "../../fragments";
 import {
     RestaurantsPageQuery,
     RestaurantsPageQueryVariables,
@@ -11,11 +14,7 @@ const RESTAURANTS_QUERY = gql`
     query RestaurantsPageQuery($input: RestaurantsInput!) {
         allCategories {
             categories {
-                id
-                name
-                coverImg
-                slug
-                restaurantCount
+                ...CategoryParts
             }
         }
         restaurants(input: $input) {
@@ -24,21 +23,21 @@ const RESTAURANTS_QUERY = gql`
             totalPages
             totalResults
             results {
-                id
-                name
-                coverImg
-                address
-                isPromoted
-                category {
-                    name
-                }
+                ...RestaurantParts
             }
         }
     }
+    ${CATEGORY_FRAGMENT}
+    ${RESTAURANT_FRAGMENT}
 `;
+
+interface IFormProps {
+    searchTerm: string;
+}
 
 export const Restaurants = () => {
     const [page, setPage] = useState(1);
+    const navigate = useNavigate();
     const { data, loading } = useQuery<RestaurantsPageQuery, RestaurantsPageQueryVariables>(
         RESTAURANTS_QUERY,
         {
@@ -52,24 +51,37 @@ export const Restaurants = () => {
 
     const onNextPageClick = () => setPage((current) => current + 1);
     const onPrevPageClick = () => setPage((current) => current - 1);
+    const { register, handleSubmit, getValues } = useForm<IFormProps>();
+    const onSearchSubmit = () => {
+        const { searchTerm } = getValues();
+        navigate({
+            pathname: "/search",
+            search: `?term=${searchTerm}`,
+        });
+    };
 
     return (
         <div>
-            <CustomHelmet content="Restaurants" />
-            <form className="bg-gray-700 w-full py-40 flex items-center justify-center">
+            <CustomHelmet />
+            <form
+                onSubmit={handleSubmit(onSearchSubmit)}
+                className="bg-gray-700 w-full py-40 flex items-center justify-center"
+            >
                 <input
+                    {...register("searchTerm", { required: true, min: 3 })}
                     type="Search"
-                    className="input w-4/12 rounded-md border-0"
+                    name="searchTerm"
+                    className="input md:w-4/12 w-3/4 rounded-md border-0"
                     placeholder="Search Restaurants"
                 />
             </form>
             {!loading && (
                 <div className="max-w-screen-xl mx-auto mt-8 pb-20">
                     <div className="flex justify-around mx-auto max-w-sm">
-                        {data?.allCategories.categories?.map((category, idx) => (
+                        {data?.allCategories.categories?.map((category) => (
                             <div
                                 className="flex flex-col group items-center cursor-pointer"
-                                key={idx}
+                                key={category.id}
                             >
                                 <div
                                     className={`w-20 h-20 rounded-full bg-no-repeat bg-cover group-hover:bg-gray-100`}
@@ -81,14 +93,14 @@ export const Restaurants = () => {
                             </div>
                         ))}
                     </div>
-                    <div className="grid grid-cols-3 mt-16 gap-x-5 gap-y-10">
-                        {data?.restaurants.results?.map((restaurant, index) => (
+                    <div className="grid md:grid-cols-3 mt-16 gap-x-5 gap-y-10">
+                        {data?.restaurants.results?.map((restaurant) => (
                             <Restaurant
                                 coverImg={restaurant.coverImg}
                                 name={restaurant.name}
                                 categoryName={restaurant.category?.name}
-                                index={index}
                                 id={`${restaurant.id}`}
+                                key={restaurant.id}
                             />
                         ))}
                     </div>

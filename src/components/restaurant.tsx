@@ -5,17 +5,10 @@ interface IRestaurantProps {
     name: string;
     categoryName?: string;
     id: string;
-    index: number;
 }
 
-export const Restaurant: React.FC<IRestaurantProps> = ({
-    coverImg,
-    name,
-    categoryName,
-    id,
-    index,
-}) => (
-    <div className="flex flex-col" key={index}>
+export const Restaurant: React.FC<IRestaurantProps> = ({ coverImg, name, categoryName, id }) => (
+    <div className="flex flex-col" id={id}>
         <div
             style={{ backgroundImage: `url(${coverImg})` }}
             className="py-28 bg-cover bg-no-repeat bg-center mb-3"
