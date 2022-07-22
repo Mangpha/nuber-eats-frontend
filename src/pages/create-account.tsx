@@ -1,5 +1,4 @@
 import React from "react";
-import { Helmet } from "react-helmet-async";
 import { gql, useMutation } from "@apollo/client";
 import { useForm } from "react-hook-form";
 import { FormError } from "../components/form-error";
@@ -11,6 +10,7 @@ import {
     CreateAccountMutation,
     CreateAccountMutationVariables,
 } from "../__api__/CreateAccountMutation";
+import { CustomHelmet } from "../components/helmet";
 
 const CREATE_ACCOUNT_MUTATION = gql`
     mutation CreateAccountMutation($createAccountInput: CreateAccountInput!) {
@@ -66,9 +66,7 @@ export const CreateAccount = () => {
 
     return (
         <div className="h-screen flex sm items-center flex-col mt-10 lg:mt-28">
-            <Helmet>
-                <title>Create Account | Nuber Eats</title>
-            </Helmet>
+            <CustomHelmet content="Create Account" />
             <div className="w-full max-w-screen-sm flex flex-col px-5 items-center">
                 <img src={nuberLogo} alt="nuber-logo" className="w-52 mb-10" />
                 <h4 className="w-full font-medium text-left text-3xl mb-5">Let's get started</h4>
