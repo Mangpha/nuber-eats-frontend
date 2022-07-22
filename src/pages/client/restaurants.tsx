@@ -1,6 +1,7 @@
 import { gql, useQuery } from "@apollo/client";
-import React from "react";
+import React, { useState } from "react";
 import { CustomHelmet } from "../../components/helmet";
+import { Restaurant } from "../../components/restaurant";
 import {
     RestaurantsPageQuery,
     RestaurantsPageQueryVariables,
@@ -37,16 +38,20 @@ const RESTAURANTS_QUERY = gql`
 `;
 
 export const Restaurants = () => {
+    const [page, setPage] = useState(1);
     const { data, loading } = useQuery<RestaurantsPageQuery, RestaurantsPageQueryVariables>(
         RESTAURANTS_QUERY,
         {
             variables: {
                 input: {
-                    page: 1,
+                    page,
                 },
             },
         },
     );
+
+    const onNextPageClick = () => setPage((current) => current + 1);
+    const onPrevPageClick = () => setPage((current) => current - 1);
 
     return (
         <div>
@@ -59,19 +64,58 @@ export const Restaurants = () => {
                 />
             </form>
             {!loading && (
-                <div className="max-w-screen-xl mx-auto mt-8">
+                <div className="max-w-screen-xl mx-auto mt-8 pb-20">
                     <div className="flex justify-around mx-auto max-w-sm">
-                        {data?.allCategories.categories?.map((category) => (
-                            <div className="flex flex-col items-center cursor-pointer">
+                        {data?.allCategories.categories?.map((category, idx) => (
+                            <div
+                                className="flex flex-col group items-center cursor-pointer"
+                                key={idx}
+                            >
                                 <div
-                                    className={`w-20 h-20 rounded-full bg-no-repeat bg-cover hover:bg-gray-100`}
+                                    className={`w-20 h-20 rounded-full bg-no-repeat bg-cover group-hover:bg-gray-100`}
                                     style={{ backgroundImage: `url(${category.coverImg})` }}
                                 ></div>
-                                <span className="text-sm text-center font-semibold mt-1">
+                                <span className="text-sm text-center font-semibold mt-3">
                                     {category.name}
                                 </span>
                             </div>
                         ))}
+                    </div>
+                    <div className="grid grid-cols-3 mt-16 gap-x-5 gap-y-10">
+                        {data?.restaurants.results?.map((restaurant, index) => (
+                            <Restaurant
+                                coverImg={restaurant.coverImg}
+                                name={restaurant.name}
+                                categoryName={restaurant.category?.name}
+                                index={index}
+                                id={`${restaurant.id}`}
+                            />
+                        ))}
+                    </div>
+                    <div className="grid grid-cols-3 text-center max-w-md items-center mx-auto mt-10">
+                        {page > 1 ? (
+                            <button
+                                onClick={onPrevPageClick}
+                                className="font-medium text-2xl focus:outline-none"
+                            >
+                                &larr;
+                            </button>
+                        ) : (
+                            <div></div>
+                        )}
+                        <span>
+                            Page {page} of {data?.restaurants.totalPages}
+                        </span>
+                        {page !== data?.restaurants.totalPages ? (
+                            <button
+                                onClick={onNextPageClick}
+                                className="font-medium text-2xl focus:outline-none"
+                            >
+                                &rarr;
+                            </button>
+                        ) : (
+                            <div></div>
+                        )}
                     </div>
                 </div>
             )}
