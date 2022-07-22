@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Header } from "../components/header";
 import { useMe } from "../hooks/useMe";
 import { NotFound } from "../pages/404";
+import { Categories } from "../pages/client/categories";
 import { Restaurants } from "../pages/client/restaurants";
 import { Search } from "../pages/client/search";
 import { ConfirmEmail } from "../pages/user/confirm-email";
@@ -13,6 +14,7 @@ const ClientRoutes = [
     <Route key={2} path="/confirm" element={<ConfirmEmail />} />,
     <Route key={3} path="/edit-profile" element={<EditProfile />} />,
     <Route key={4} path="/search" element={<Search />} />,
+    <Route key={5} path="/category/:slug" element={<Categories />} />,
 ];
 
 export const LoggedInRouter = () => {

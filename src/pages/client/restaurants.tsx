@@ -1,7 +1,8 @@
 import { gql, useQuery } from "@apollo/client";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { Category } from "../../components/category";
 import { CustomHelmet } from "../../components/helmet";
 import { Restaurant } from "../../components/restaurant";
 import { CATEGORY_FRAGMENT, RESTAURANT_FRAGMENT } from "../../fragments";
@@ -79,18 +80,14 @@ export const Restaurants = () => {
                 <div className="max-w-screen-xl mx-auto mt-8 pb-20">
                     <div className="flex justify-around mx-auto max-w-sm">
                         {data?.allCategories.categories?.map((category) => (
-                            <div
-                                className="flex flex-col group items-center cursor-pointer"
-                                key={category.id}
-                            >
-                                <div
-                                    className={`w-20 h-20 rounded-full bg-no-repeat bg-cover group-hover:bg-gray-100`}
-                                    style={{ backgroundImage: `url(${category.coverImg})` }}
-                                ></div>
-                                <span className="text-sm text-center font-semibold mt-3">
-                                    {category.name}
-                                </span>
-                            </div>
+                            <Link to={`/category/${category.slug}`} key={category.id}>
+                                <Category
+                                    key={category.id}
+                                    id={`${category.id}`}
+                                    coverImg={category.coverImg}
+                                    name={category.name}
+                                />
+                            </Link>
                         ))}
                     </div>
                     <div className="grid md:grid-cols-3 mt-16 gap-x-5 gap-y-10">
