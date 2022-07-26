@@ -51,7 +51,7 @@ export const Search = () => {
     return (
         <div>
             <CustomHelmet content="Search" />
-            <div className="flex justify-center font-semibold mx-auto max-w-sm mt-10 mb-20">
+            <div className="flex justify-center font-semibold mx-auto max-w-sm mb-20">
                 Search Term: {decodeURI(location.search).split("?term=")[1]}
             </div>
             {!loading && (
