@@ -80,14 +80,13 @@ export const Restaurants = () => {
                 <div className="max-w-screen-xl mx-auto mt-8 pb-20">
                     <div className="flex justify-around mx-auto max-w-sm">
                         {data?.allCategories.categories?.map((category) => (
-                            <Link to={`/category/${category.slug}`} key={category.id}>
-                                <Category
-                                    key={category.id}
-                                    id={`${category.id}`}
-                                    coverImg={category.coverImg}
-                                    name={category.name}
-                                />
-                            </Link>
+                            <Category
+                                key={category.id}
+                                id={`${category.id}`}
+                                coverImg={category.coverImg}
+                                name={category.name}
+                                slug={category.slug}
+                            />
                         ))}
                     </div>
                     <div className="grid md:grid-cols-3 mt-16 gap-x-5 gap-y-10">
