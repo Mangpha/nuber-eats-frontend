@@ -1,4 +1,4 @@
-import { render, waitFor, screen } from "@testing-library/react";
+import { render, waitFor } from "@testing-library/react";
 import React from "react";
 import { isLoggedInVar } from "../../apollo";
 import { App } from "../app";
@@ -16,14 +16,16 @@ jest.mock("../../routers/logged-in-router", () => {
 
 describe("<App />", () => {
     it("renders LoggedOutRouter", () => {
-        render(<App />);
-        screen.getByText("logged-out");
+        const { getByText } = render(<App />);
+        getByText("logged-out");
     });
     it("renders LoggedInRouter", async () => {
+        const { getByText } = render(<App />);
         await waitFor(() => {
             isLoggedInVar(true);
         });
-        render(<App />);
-        screen.getByText("logged-in");
+        setTimeout(() => {
+            getByText("logged-in");
+        }, 500);
     });
 });
