@@ -11,7 +11,7 @@ describe("<Button />", () => {
     });
 
     it("should display loading", () => {
-        const { debug, container } = render(
+        const { container } = render(
             <Button canClick={false} loading={true} actionText={"test"} />,
         );
         screen.getByText("Loading...");
