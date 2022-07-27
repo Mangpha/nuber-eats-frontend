@@ -23,8 +23,7 @@ describe("<App />", () => {
         const { getByText } = render(<App />);
         await waitFor(async () => {
             isLoggedInVar(true);
-            await new Promise((resolve) => setTimeout(resolve, 100));
+            getByText("logged-in");
         });
-        getByText("logged-in");
     });
 });
