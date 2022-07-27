@@ -10,7 +10,7 @@ import { authToken, isLoggedInVar } from "../apollo";
 import { LOCALSTORAGE_TOKEN } from "../constants";
 import { CustomHelmet } from "../components/helmet";
 
-const LOGIN_MUTATION = gql`
+export const LOGIN_MUTATION = gql`
     mutation LoginMutation($loginInput: LoginInput!) {
         login(input: $loginInput) {
             ok
@@ -36,6 +36,7 @@ export const Login = () => {
     });
     const onCompleted = (data: LoginMutation) => {
         const { ok, token } = data.login;
+
         if (ok && token) {
             localStorage.setItem(LOCALSTORAGE_TOKEN, token);
             authToken(token);
