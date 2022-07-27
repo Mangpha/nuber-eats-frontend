@@ -28,7 +28,7 @@
     "scripts": {
         "start": "npm run apollo:codegen & npm run tailwind:build & react-scripts start",
         "build": "react-scripts build",
-        "test": "react-scripts test",
+        "test": "react-scripts test --verbose",
         "eject": "react-scripts eject",
         "tailwind:build": "npx tailwindcss-cli@latest build src/styles/tailwind.css -o src/styles/styles.css",
         "apollo:codegen": "rimraf src/__api__ && apollo client:codegen src/__api__ --target=typescript --outputFlat",
