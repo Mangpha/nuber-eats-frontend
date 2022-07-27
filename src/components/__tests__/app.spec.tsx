@@ -21,11 +21,10 @@ describe("<App />", () => {
     });
     it("renders LoggedInRouter", async () => {
         const { getByText } = render(<App />);
-        await waitFor(() => {
+        await waitFor(async () => {
             isLoggedInVar(true);
+            await new Promise((resolve) => setTimeout(resolve, 100));
         });
-        setTimeout(() => {
-            getByText("logged-in");
-        }, 500);
+        getByText("logged-in");
     });
 });
