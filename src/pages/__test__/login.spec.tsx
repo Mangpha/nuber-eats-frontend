@@ -1,5 +1,5 @@
 import { ApolloProvider } from "@apollo/client";
-import { render, RenderResult, waitFor } from "@testing-library/react";
+import { render, RenderResult, waitFor } from "../../test-utils";
 import userEvent from "@testing-library/user-event";
 import { createMockClient, MockApolloClient } from "mock-apollo-client";
 import React from "react";
@@ -15,13 +15,9 @@ describe("<Login />", () => {
         await waitFor(() => {
             mockClient = createMockClient();
             renderResult = render(
-                <HelmetProvider>
-                    <BrowserRouter>
-                        <ApolloProvider client={mockClient}>
-                            <Login />
-                        </ApolloProvider>
-                    </BrowserRouter>
-                </HelmetProvider>,
+                <ApolloProvider client={mockClient}>
+                    <Login />
+                </ApolloProvider>,
             );
         });
     });
