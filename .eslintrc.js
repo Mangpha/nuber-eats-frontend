@@ -1,5 +1,5 @@
 module.exports = {
     rules: {
-        "no-debugger": false,
+        "no-debugger": "off",
     },
 };
