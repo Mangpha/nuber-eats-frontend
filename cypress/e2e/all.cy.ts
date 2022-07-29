@@ -1,1 +1,1 @@
-import "./first-test.cy";
+import "./auth/login.cy";
