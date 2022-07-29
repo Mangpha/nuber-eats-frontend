@@ -25,14 +25,31 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 //
-// declare global {
-//   namespace Cypress {
-//     interface Chainable {
-//       login(email: string, password: string): Chainable<void>
-//       drag(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       dismiss(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       visit(originalFn: CommandOriginalFn, url: string, options: Partial<VisitOptions>): Chainable<Element>
-//     }
-//   }
-// }
+declare global {
+    namespace Cypress {
+        interface Chainable {
+            assertLoggedIn(): void;
+            assertLoggedOut(): void;
+            login(email: string, password: string): void;
+        }
+    }
+}
+
 import "@testing-library/cypress/add-commands";
+
+Cypress.Commands.add("assertLoggedIn", () => {
+    cy.window().its("localStorage.nuber-token").should("be.a", "string");
+});
+
+Cypress.Commands.add("assertLoggedOut", () => {
+    cy.window().its("localStorage.nuber-token").should("be.undefined");
+});
+
+Cypress.Commands.add("login", (email: string, password: string) => {
+    cy.assertLoggedOut();
+    cy.visit("/").title().should("eq", "Login | Nuber Eats");
+    cy.findByPlaceholderText(/email/i).type(email);
+    cy.findByPlaceholderText(/password/i).type(password);
+    cy.findByRole("button").should("not.have.class", "pointer-events-none").click();
+    cy.assertLoggedIn();
+});

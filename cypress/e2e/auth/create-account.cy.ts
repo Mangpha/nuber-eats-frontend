@@ -37,9 +37,6 @@ describe("Create Account", () => {
         cy.findByRole("button").click();
         cy.wait(1000);
         cy.visit("/").title().should("eq", "Login | Nuber Eats");
-        cy.findByPlaceholderText(/email/i).type("testing@account.com");
-        cy.findByPlaceholderText(/password/i).type("test password");
-        cy.findByRole("button").click();
-        cy.window().its("localStorage.nuber-token").should("be.a", "string");
+        cy.login("testing@account.com", "test password");
     });
 });

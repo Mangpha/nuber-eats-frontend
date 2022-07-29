@@ -18,13 +18,12 @@ describe("Login", () => {
         cy.findByRole("button").click();
         cy.wait(100);
         cy.findByRole("alert").should("have.text", "Wrong Password");
+        cy.findByPlaceholderText(/email/i).clear().type("notfound@email.com");
+        cy.findByRole("button").click();
+        cy.findByRole("alert").should("have.text", "User Not Found");
     });
 
     it("can fill out the form and log in", () => {
-        cy.visit("/");
-        cy.findByPlaceholderText(/email/i).type("8350130@gmail.com");
-        cy.findByPlaceholderText(/password/i).type("1234512345");
-        cy.findByRole("button").should("not.have.class", "pointer-events-none").click();
-        cy.window().its("localStorage.nuber-token").should("be.a", "string");
+        cy.login("8350130@gmail.com", "1234512345");
     });
 });
