@@ -2,6 +2,7 @@ describe("Create Account", () => {
     it("should see email / password validation errors", () => {
         cy.visit("/");
         cy.findByText(/Create An Account/i).click();
+        cy.assertTitle("Create Account");
         cy.findByPlaceholderText(/email/i).type("error@email");
         cy.findByRole("alert").should("have.text", "Please enter a valid email");
         cy.findByPlaceholderText(/email/i).clear();
@@ -19,24 +20,20 @@ describe("Create Account", () => {
             if (operationName && operationName === "CreateAccountMutation") {
                 req.reply((res) => {
                     res.send({
-                        data: {
-                            createAccount: {
-                                ok: true,
-                                error: null,
-                                __typename: "CreateAccountOutput",
-                            },
-                        },
+                        fixture: "auth/create-account.json",
                     });
                 });
             }
         });
         cy.visit("/");
         cy.findByText(/Create An Account/i).click();
+        cy.assertTitle("Create Account");
         cy.findByPlaceholderText(/email/i).type("testing@account.com");
         cy.findByPlaceholderText(/password/i).type("test password");
         cy.findByRole("button").click();
         cy.wait(1000);
-        cy.visit("/").title().should("eq", "Login | Nuber Eats");
+        cy.visit("/");
+        cy.assertTitle("Login");
         cy.login("testing@account.com", "test password");
     });
 });

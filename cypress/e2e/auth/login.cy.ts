@@ -1,6 +1,7 @@
 describe("Login", () => {
     it("should see login page", () => {
-        cy.visit("/").title().should("eq", "Login | Nuber Eats");
+        cy.visit("/");
+        cy.assertTitle("Login");
     });
 
     it("can see email / password validation", () => {
@@ -9,7 +10,7 @@ describe("Login", () => {
         cy.findByRole("alert").should("have.text", "Please enter a valid email");
         cy.findByPlaceholderText(/email/i).clear();
         cy.findByRole("alert").should("have.text", "Email is required");
-        cy.findByPlaceholderText(/email/i).type("8350130@gmail.com");
+        cy.findByPlaceholderText(/email/i).type("testing@account.com");
         cy.findByPlaceholderText(/password/i).type("error");
         cy.findByRole("alert").should("have.text", "Password must be more than 10 chars.");
         cy.findByPlaceholderText(/password/i).clear();
@@ -24,6 +25,6 @@ describe("Login", () => {
     });
 
     it("can fill out the form and log in", () => {
-        cy.login("8350130@gmail.com", "1234512345");
+        cy.login("testing@account.com", "test password");
     });
 });
