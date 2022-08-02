@@ -1,6 +1,7 @@
 import { gql, useQuery } from "@apollo/client";
 import React from "react";
 import { Link, useParams } from "react-router-dom";
+import { Dish } from "../../components/dish";
 import { CustomHelmet } from "../../components/helmet";
 import { DISH_FRAGMENT, RESTAURANT_FRAGMENT } from "../../fragments";
 import { MyRestaurantQuery, MyRestaurantQueryVariables } from "../../__api__/MyRestaurantQuery";
@@ -31,6 +32,7 @@ export const MyRestaurant = () => {
             },
         },
     });
+    console.log(data);
 
     return (
         <div>
@@ -56,7 +58,15 @@ export const MyRestaurant = () => {
                     {data?.myRestaurant.restaurant?.menu?.length === 0 ? (
                         <h4 className="text-xl mb-5">Please upload a dish.</h4>
                     ) : (
-                        ""
+                        <div className="grid md:grid-cols-3 mt-16 gap-x-5 gap-y-10">
+                            {data?.myRestaurant.restaurant?.menu?.map((dish) => (
+                                <Dish
+                                    name={dish.name}
+                                    price={dish.price}
+                                    description={dish.description}
+                                />
+                            ))}
+                        </div>
                     )}
                 </div>
             </div>
