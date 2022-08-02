@@ -7,7 +7,9 @@ import { Categories } from "../pages/client/categories";
 import { RestaurantDetail } from "../pages/client/restaurant-detail";
 import { Restaurants } from "../pages/client/restaurants";
 import { Search } from "../pages/client/search";
+import { AddDish } from "../pages/owner/add-dish";
 import { AddRestaurant } from "../pages/owner/add-restaurant";
+import { MyRestaurant } from "../pages/owner/my-restaurant";
 import { MyRestaurants } from "../pages/owner/my-restaurants";
 import { ConfirmEmail } from "../pages/user/confirm-email";
 import { EditProfile } from "../pages/user/edit-profile";
@@ -39,6 +41,14 @@ const ownerRoutes = [
     {
         path: "/add-restaurant",
         component: <AddRestaurant />,
+    },
+    {
+        path: "/restaurant/:id",
+        component: <MyRestaurant />,
+    },
+    {
+        path: "/restaurant/:restaurantId/add-dish",
+        component: <AddDish />,
     },
 ];
 
