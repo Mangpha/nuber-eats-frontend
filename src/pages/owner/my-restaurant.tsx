@@ -1,5 +1,6 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import React from "react";
+import { Helmet } from "react-helmet-async";
 import { Link, useParams } from "react-router-dom";
 import {
     VictoryAxis,
@@ -11,8 +12,12 @@ import {
     VictoryVoronoiContainer,
 } from "victory";
 import { Dish } from "../../components/dish";
-import { CustomHelmet } from "../../components/helmet";
 import { DISH_FRAGMENT, ORDER_FRAGMENT, RESTAURANT_FRAGMENT } from "../../fragments";
+import { useMe } from "../../hooks/useMe";
+import {
+    CreatePaymentMutation,
+    CreatePaymentMutationVariables,
+} from "../../__api__/CreatePaymentMutation";
 import { MyRestaurantQuery, MyRestaurantQueryVariables } from "../../__api__/MyRestaurantQuery";
 
 export const MY_RESTAURANT_QUERY = gql`
@@ -36,6 +41,15 @@ export const MY_RESTAURANT_QUERY = gql`
     ${ORDER_FRAGMENT}
 `;
 
+const CREATE_PAYMENT_MUTATION = gql`
+    mutation CreatePaymentMutation($input: CreatePaymentInput!) {
+        createPayment(input: $input) {
+            ok
+            error
+        }
+    }
+`;
+
 export const MyRestaurant = () => {
     const { id } = useParams<{ id: string }>();
     const { data } = useQuery<MyRestaurantQuery, MyRestaurantQueryVariables>(MY_RESTAURANT_QUERY, {
@@ -46,10 +60,48 @@ export const MyRestaurant = () => {
         },
     });
     let chartData = data?.myRestaurant.restaurant?.orders.slice().sort((a, b) => a.id - b.id);
+    const { data: userData } = useMe();
+    const onCompleted = (data: CreatePaymentMutation) => {
+        if (data.createPayment.ok) {
+            alert("Your restaurant is being promoted");
+        }
+    };
+    const [createPaymentMutation, { loading }] = useMutation<
+        CreatePaymentMutation,
+        CreatePaymentMutationVariables
+    >(CREATE_PAYMENT_MUTATION, {
+        onCompleted,
+    });
+
+    // @ts-ignore
+    const Paddle = window.Paddle;
+    const triggerPaddle = () => {
+        if (userData?.me.email) {
+            Paddle.Setup({ vendor: 153550 });
+            Paddle.Checkout.open({
+                product: 783143,
+                email: userData.me.email,
+                successCallback: (data: any) => {
+                    createPaymentMutation({
+                        variables: {
+                            input: {
+                                transactionId: data.checkout.id,
+                                restaurantId: +`${id}`,
+                            },
+                        },
+                    });
+                },
+            });
+        }
+    };
 
     return (
         <div>
-            <CustomHelmet content={data?.myRestaurant.restaurant?.name || "Loading..."} />
+            <Helmet>
+                <title>{`${
+                    data?.myRestaurant.restaurant?.name || "Loading..."
+                } | Nuber Eats`}</title>
+            </Helmet>
             <div
                 className="bg-gray-700 py-28 bg-center bg-cover"
                 style={{ backgroundImage: `url(${data?.myRestaurant.restaurant?.coverImg})` }}
@@ -64,9 +116,12 @@ export const MyRestaurant = () => {
                 >
                     Add Dish &rarr;
                 </Link>
-                <Link to={``} className="text-white bg-lime-700 py-3 px-10">
+                <span
+                    onClick={triggerPaddle}
+                    className="text-white bg-lime-700 py-3 px-10 cursor-pointer"
+                >
                     Buy Promotion &rarr;
-                </Link>
+                </span>
                 <div className="mt-10">
                     {data?.myRestaurant.restaurant?.menu?.length === 0 ? (
                         <h4 className="text-xl mb-5">Please upload a dish.</h4>
