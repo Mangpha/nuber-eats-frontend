@@ -37,6 +37,13 @@ export interface MyRestaurantQuery_myRestaurant_restaurant_menu {
   options: MyRestaurantQuery_myRestaurant_restaurant_menu_options[] | null;
 }
 
+export interface MyRestaurantQuery_myRestaurant_restaurant_orders {
+  __typename: "Order";
+  id: number;
+  createdAt: any;
+  total: number | null;
+}
+
 export interface MyRestaurantQuery_myRestaurant_restaurant {
   __typename: "Restaurant";
   id: number;
@@ -46,6 +53,7 @@ export interface MyRestaurantQuery_myRestaurant_restaurant {
   isPromoted: boolean;
   category: MyRestaurantQuery_myRestaurant_restaurant_category | null;
   menu: MyRestaurantQuery_myRestaurant_restaurant_menu[] | null;
+  orders: MyRestaurantQuery_myRestaurant_restaurant_orders[];
 }
 
 export interface MyRestaurantQuery_myRestaurant {
