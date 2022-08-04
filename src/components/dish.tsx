@@ -1,4 +1,5 @@
-import React from "react";
+import React, { ReactNode } from "react";
+import { JsxChild } from "typescript";
 import { Restaurant_restaurant_restaurant_menu_options } from "../__api__/Restaurant";
 
 interface IDishProps {
@@ -12,6 +13,7 @@ interface IDishProps {
     orderStarted?: boolean;
     addItemToOrder?: (dishId: number) => void;
     removeFromOrder?: (dishId: number) => void;
+    children?: ReactNode;
 }
 
 export const Dish: React.FC<IDishProps> = ({
@@ -25,6 +27,7 @@ export const Dish: React.FC<IDishProps> = ({
     orderStarted = false,
     addItemToOrder,
     removeFromOrder,
+    children: dishOptions,
 }) => {
     const onClick = () => {
         if (orderStarted) {
@@ -38,25 +41,31 @@ export const Dish: React.FC<IDishProps> = ({
     };
     return (
         <div
-            onClick={onClick}
             className={`px-8 pt-4 pb-8 border transition-all ${
                 isSelected ? "border-gray-800" : "hover:border-gray-800"
             }`}
         >
             <div className="mb-5">
-                <h3 className="text-2xl font-medium">{name}</h3>
+                <h3 className="text-2xl font-medium flex items-center">
+                    {name}{" "}
+                    {orderStarted && (
+                        <button
+                            className={`ml-3 py-1 px-3 focus:outline-none text-sm  text-white ${
+                                isSelected ? "bg-red-500" : " bg-lime-600"
+                            }`}
+                            onClick={onClick}
+                        >
+                            {isSelected ? "Remove" : "Add"}
+                        </button>
+                    )}
+                </h3>
                 <h4 className="font-medium">{description}</h4>
             </div>
             <span>{price}₩</span>
             {isCustomer && options?.length !== 0 && (
                 <div>
                     <h5 className="font-medium mt-7 mb-3">Dish Options</h5>
-                    {options?.map((option, idx) => (
-                        <span className="flex items-center" key={idx}>
-                            <h6 className="mr-3">{option.name}</h6>
-                            <h6 className="text-sm opacity-75">({option.extra}₩)</h6>
-                        </span>
-                    ))}
+                    <div className="grid gap-2  justify-start">{dishOptions}</div>
                 </div>
             )}
         </div>
