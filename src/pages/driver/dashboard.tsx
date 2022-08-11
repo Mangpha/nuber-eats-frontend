@@ -11,7 +11,7 @@ export const Dashboard = () => {
                         lat: 10.99835602,
                         lng: 77.01502627,
                     }}
-                    bootstrapURLKeys={{ key: "AIzaSyBubq_cxGalUXvsrHIADJ02hakJnm2ywN4" }}
+                    bootstrapURLKeys={{ key: `${process.env.REACT_APP_GOOGLE_MAP_KEY}` }}
                 >
                     <h1>Hello</h1>
                 </GoogleMapReact>
