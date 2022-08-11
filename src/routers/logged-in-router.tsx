@@ -7,6 +7,7 @@ import { Categories } from "../pages/client/categories";
 import { RestaurantDetail } from "../pages/client/restaurant-detail";
 import { Restaurants } from "../pages/client/restaurants";
 import { Search } from "../pages/client/search";
+import { Dashboard } from "../pages/driver/dashboard";
 import { Order } from "../pages/order";
 import { AddDish } from "../pages/owner/add-dish";
 import { AddRestaurant } from "../pages/owner/add-restaurant";
@@ -14,6 +15,7 @@ import { MyRestaurant } from "../pages/owner/my-restaurant";
 import { MyRestaurants } from "../pages/owner/my-restaurants";
 import { ConfirmEmail } from "../pages/user/confirm-email";
 import { EditProfile } from "../pages/user/edit-profile";
+import { UserRole } from "../__api__/globalTypes";
 
 const clientRoutes = [
     {
@@ -53,6 +55,13 @@ const ownerRoutes = [
     },
 ];
 
+const driverRoutes = [
+    {
+        path: "/",
+        component: <Dashboard />,
+    },
+];
+
 const commonRoutes = [
     {
         path: "/confirm",
@@ -85,12 +94,16 @@ export const LoggedInRouter = () => {
                 {commonRoutes.map((route) => (
                     <Route key={route.path} path={route.path} element={route.component} />
                 ))}
-                {data.me.role === "Client" &&
+                {data.me.role === UserRole.Client &&
                     clientRoutes.map((route) => (
                         <Route key={route.path} path={route.path} element={route.component} />
                     ))}
-                {data.me.role === "Owner" &&
+                {data.me.role === UserRole.Owner &&
                     ownerRoutes.map((route) => (
+                        <Route key={route.path} path={route.path} element={route.component} />
+                    ))}
+                {data.me.role === UserRole.Delivery &&
+                    driverRoutes.map((route) => (
                         <Route key={route.path} path={route.path} element={route.component} />
                     ))}
                 <Route path="*" element={<NotFound />} />
