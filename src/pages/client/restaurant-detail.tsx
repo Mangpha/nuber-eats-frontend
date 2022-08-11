@@ -1,6 +1,6 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import React, { useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Dish } from "../../components/dish";
 import { DishOption } from "../../components/dish-option";
 import { DISH_FRAGMENT, RESTAURANT_FRAGMENT } from "../../fragments";
@@ -140,6 +140,7 @@ export const RestaurantDetail = () => {
             });
         }
     };
+
     return (
         <div>
             <div

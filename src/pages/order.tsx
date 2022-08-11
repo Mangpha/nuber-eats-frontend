@@ -1,13 +1,11 @@
-import { gql, useQuery, useSubscription } from "@apollo/client";
-import React from "react";
+import { gql, useQuery } from "@apollo/client";
+import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { CustomHelmet } from "../components/helmet";
 import { FULL_ORDER_FRAGMENT } from "../fragments";
+import { useMe } from "../hooks/useMe";
 import { GetOrderQuery, GetOrderQueryVariables } from "../__api__/GetOrderQuery";
-import {
-    OrderUpdatesSubscription,
-    OrderUpdatesSubscriptionVariables,
-} from "../__api__/OrderUpdatesSubscription";
+import { OrderUpdatesSubscription } from "../__api__/OrderUpdatesSubscription";
 
 const GET_ORDER_QUERY = gql`
     query GetOrderQuery($input: GetOrderInput!) {
@@ -33,24 +31,46 @@ const ORDER_SUBSCRIPTION = gql`
 
 export const Order = () => {
     const params = useParams<{ id: string }>();
-    const { data } = useQuery<GetOrderQuery, GetOrderQueryVariables>(GET_ORDER_QUERY, {
-        variables: {
-            input: {
-                id: +`${params.id}`,
+    const { data: userData } = useMe();
+    const { data, subscribeToMore } = useQuery<GetOrderQuery, GetOrderQueryVariables>(
+        GET_ORDER_QUERY,
+        {
+            variables: {
+                input: {
+                    id: +`${params.id}`,
+                },
             },
         },
-    });
+    );
 
-    const { data: subscriptionData, loading } = useSubscription<
-        OrderUpdatesSubscription,
-        OrderUpdatesSubscriptionVariables
-    >(ORDER_SUBSCRIPTION, {
-        variables: {
-            input: { id: +`${params.id}` },
-        },
-    });
-
-    console.log(subscriptionData);
+    useEffect(() => {
+        if (data?.getOrder.ok) {
+            subscribeToMore({
+                document: ORDER_SUBSCRIPTION,
+                variables: {
+                    input: {
+                        id: +`${params.id}`,
+                    },
+                },
+                updateQuery: (
+                    prev,
+                    {
+                        subscriptionData: { data },
+                    }: { subscriptionData: { data: OrderUpdatesSubscription } },
+                ) => {
+                    if (!data) return prev;
+                    return {
+                        getOrder: {
+                            ...prev.getOrder,
+                            order: {
+                                ...data.orderUpdates,
+                            },
+                        },
+                    };
+                },
+            });
+        }
+    }, [data]);
 
     return (
         <div className="container mt-28 flex justify-center">
@@ -75,9 +95,25 @@ export const Order = () => {
                             {data?.getOrder.order?.driver?.email || "Not Yet."}
                         </span>
                     </div>
-                    <span className="mt-5 mb-3 text-2xl text-lime-600">
-                        Status: {data?.getOrder.order?.status}
-                    </span>
+                    {userData?.me.role === "Client" && (
+                        <span className="mt-5 mb-3 text-2xl text-lime-600">
+                            Status: {data?.getOrder.order?.status}
+                        </span>
+                    )}
+                    {userData?.me.role === "Owner" && (
+                        <>
+                            {data?.getOrder.order?.status === "Pending" && (
+                                <button className="btn bg-lime-600 hover:bg-lime-700 text-white">
+                                    Accept order
+                                </button>
+                            )}
+                            {data?.getOrder.order?.status === "Cooking" && (
+                                <button className="btn bg-lime-600 hover:bg-lime-700 text-white">
+                                    Order Cooked
+                                </button>
+                            )}
+                        </>
+                    )}
                 </div>
             </div>
         </div>
