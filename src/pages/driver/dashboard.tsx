@@ -19,10 +19,8 @@ export const Dashboard = () => {
     }, []);
 
     const onApiLoaded = ({ map, maps }: { map: any; maps: any }) => {
-        setTimeout(() => {
-            console.log(driverCoords);
-            map.panTo(new maps.LatLng(driverCoords.latitude, driverCoords.longitude));
-        }, 2000);
+        map.panTo(new maps.LatLng(driverCoords.latitude, driverCoords.longitude));
+        console.log(driverCoords);
     };
 
     return (
