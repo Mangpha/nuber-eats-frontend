@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import GoogleMapReact from "google-map-react";
-import { gql, useSubscription } from "@apollo/client";
+import { gql, useMutation, useSubscription } from "@apollo/client";
 import { FULL_ORDER_FRAGMENT } from "../../fragments";
 import { CookedOrdersSubscription } from "../../__api__/CookedOrdersSubscription";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { TakeOrderMutation, TakeOrderMutationVariables } from "../../__api__/TakeOrderMutation";
 
 const COOKED_ORDERS_SUBSCRIPTION = gql`
     subscription CookedOrdersSubscription {
@@ -12,6 +13,15 @@ const COOKED_ORDERS_SUBSCRIPTION = gql`
         }
     }
     ${FULL_ORDER_FRAGMENT}
+`;
+
+const TAKE_ORDER_MUTATION = gql`
+    mutation TakeOrderMutation($input: TakeOrderInput!) {
+        takeOrder(input: $input) {
+            ok
+            error
+        }
+    }
 `;
 
 interface ICoords {
@@ -97,6 +107,27 @@ export const Dashboard = () => {
         }
     }, [cookedOrdersData]);
 
+    const navigate = useNavigate();
+
+    const onCompleted = (data: TakeOrderMutation) => {
+        if (data.takeOrder.ok) navigate(`/orders/${cookedOrdersData?.cookedOrders.id}`);
+    };
+    const [takeOrderMutation] = useMutation<TakeOrderMutation, TakeOrderMutationVariables>(
+        TAKE_ORDER_MUTATION,
+        {
+            onCompleted,
+        },
+    );
+    const triggerMutation = (orderId: number) => {
+        takeOrderMutation({
+            variables: {
+                input: {
+                    id: orderId,
+                },
+            },
+        });
+    };
+
     return (
         <div>
             <div className="overflow-hidden" style={{ width: window.innerWidth, height: "50vh" }}>
@@ -120,12 +151,12 @@ export const Dashboard = () => {
                         <h1 className="text-center text-2xl font-medium my-3">
                             Pick it up soon! @ {cookedOrdersData.cookedOrders.restaurant?.name}
                         </h1>
-                        <Link
-                            to={`/orders/${cookedOrdersData.cookedOrders.id}`}
+                        <button
+                            onClick={() => triggerMutation(cookedOrdersData?.cookedOrders.id)}
                             className="btn mt-5 w-full bg-lime-600 hover:bg-lime-700 text-white block text-center"
                         >
                             Accept Challenge &rarr;
-                        </Link>
+                        </button>
                     </>
                 ) : (
                     <h1 className="text-center text-3xl font-medium">No Orders yet.</h1>
