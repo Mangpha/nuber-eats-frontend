@@ -30,13 +30,15 @@
         "web-vitals": "^2.1.4"
     },
     "scripts": {
+        "tailwind:prodbuild": "NODE_ENV=production npm run tailwind:build",
         "start": "npm run apollo:codegen & npm run tailwind:build & react-scripts start",
-        "build": "react-scripts build",
+        "build": "CI=false react-scripts build",
         "test": "react-scripts test --verbose",
         "eject": "react-scripts eject",
-        "tailwind:build": "npx tailwindcss-cli@latest build src/styles/tailwind.css -o src/styles/styles.css",
+        "tailwind:build": "NODE_ENV=production npx tailwindcss-cli@latest build src/styles/tailwind.css -o src/styles/styles.css",
         "apollo:codegen": "rimraf src/__api__ && apollo client:codegen src/__api__ --target=typescript --outputFlat",
-        "test:cov": "npm test -- --coverage --watchAll=false"
+        "test:cov": "npm test -- --coverage --watchAll=false",
+        "prebuild": "npm run tailwind:prodbuild"
     },
     "eslintConfig": {
         "extends": [
