@@ -49,6 +49,31 @@ export const Dashboard = () => {
         }
     }, [driverCoords.lat, driverCoords.lng]);
 
+    const onGetRouteClick = () => {
+        if (map) {
+            const directionsService = new google.maps.DirectionsService();
+            const directionsRenderer = new google.maps.DirectionsRenderer();
+            directionsRenderer.setMap(map);
+            directionsService.route(
+                {
+                    origin: {
+                        location: new google.maps.LatLng(driverCoords.lat, driverCoords.lng),
+                    },
+                    destination: {
+                        location: new google.maps.LatLng(
+                            driverCoords.lat + 0.05,
+                            driverCoords.lng + 0.05,
+                        ),
+                    },
+                    travelMode: google.maps.TravelMode.TRANSIT,
+                },
+                (results) => {
+                    directionsRenderer.setDirections(results);
+                },
+            );
+        }
+    };
+
     return (
         <div>
             <div className="overflow-hidden" style={{ width: window.innerWidth, height: "50vh" }}>
@@ -62,9 +87,10 @@ export const Dashboard = () => {
                     }}
                     bootstrapURLKeys={{ key: `${process.env.REACT_APP_GOOGLE_MAP_KEY}` }}
                 >
-                    <Driver lat={driverCoords.lat} lng={driverCoords.lng} />
+                    {/* <Driver lat={driverCoords.lat} lng={driverCoords.lng} /> */}
                 </GoogleMapReact>
             </div>
+            <button onClick={onGetRouteClick}>Get Route</button>
         </div>
     );
 };
